@@ -2,7 +2,9 @@
 
 #############################################
 # Termux / Linux PHP + Cloudflared Launcher
-# Version : 1.0
+# Version : 1.0.1
+# Author  : Barath Kumar
+# GitHub  : https://github.com/balmikiii/webhost
 #############################################
 
 ############################
@@ -145,6 +147,9 @@ create_project_dir(){
 
     if [ "$PLATFORM" = "termux" ]; then
 
+        SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+        # Create Termux project root if missing
         if [ ! -d "$PROJECT_ROOT" ]; then
 
             warning "Creating Project Directory..."
@@ -152,6 +157,28 @@ create_project_dir(){
             mkdir -p "$PROJECT_ROOT"
 
             success "$PROJECT_ROOT"
+
+        fi
+
+        # Create default project only if Termux folder is empty
+        if [ -z "$(ls -A "$PROJECT_ROOT")" ]; then
+
+            warning "Creating default WebHost project..."
+
+            mkdir -p "$PROJECT_ROOT/webhost"
+
+            if [ -f "$SCRIPT_DIR/templates/index.php" ]; then
+
+                cp "$SCRIPT_DIR/templates/index.php" \
+                   "$PROJECT_ROOT/webhost/index.php"
+
+                success "Default index.php created."
+
+            else
+
+                warning "templates/index.php not found."
+
+            fi
 
         fi
 
